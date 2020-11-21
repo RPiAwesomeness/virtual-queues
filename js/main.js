@@ -5,8 +5,8 @@ $(document).ready(function() {
   }
 
   // NOTIFICATION
-  // $("#notification-overlay").show();
-  // setOverlay();
+  $("#notification-overlay").show();
+  setOverlay();
 
   // spin the loading icon spinIcon is called
   let degree = 0;
