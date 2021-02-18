@@ -11,3 +11,24 @@ h2.ui.header {
 .ui.header .sub.header {
   color: white !important;
 }
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+#root {
+  padding-top: 100px;
+  overflow: hidden;
+  display: flex;
+  direction: column;
+}
+
+#content {
+  height: auto;
+  overflow: auto;
+  font-size: 24pt;
+  flex: 1;
+}
