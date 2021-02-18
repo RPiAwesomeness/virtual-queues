@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import TitleBar from "./components/titlebar.js";
+import TitleBar from './components/titlebar';
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -11,7 +11,7 @@ class App extends React.Component {
     return (
       <div>
         <TitleBar />
-        <p style={{ fontSize: "24pt", height: "calc(100% - 15vh)" }}>
+        <p style={{ fontSize: "24pt", marginTop: "10vh" }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Integer
           enim neque volutpat ac tincidunt vitae semper quis. Commodo quis

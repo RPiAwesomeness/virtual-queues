@@ -7,7 +7,6 @@ class TitleBar extends React.Component {
     this.style = {
       width: "100%",
       minHeight: "10vh",
-      height: "10vh",
       display: "flex",
       justifyContent: "space-between",
       background: "#053864",
