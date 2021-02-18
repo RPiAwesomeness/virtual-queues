@@ -11,7 +11,7 @@ class App extends React.Component {
     return (
       <div>
         <TitleBar />
-        <p style={{ fontSize: "24pt" }}>
+        <p style={{ fontSize: "24pt", height: "calc(100% - 15vh)" }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Integer
           enim neque volutpat ac tincidunt vitae semper quis. Commodo quis
