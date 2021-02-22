@@ -12,7 +12,7 @@ class TitleBar extends React.Component {
       background: "#053864",
       padding: "20px",
       color: "white",
-      position: "fixed",
+      // position: "fixed",
       overflow: "hidden"
     }
   }
