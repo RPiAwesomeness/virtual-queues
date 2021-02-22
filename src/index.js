@@ -9,7 +9,7 @@ import Attraction from "./components/attraction";
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
 
-import christmas from './images/christmas.jpg';
+import christmas from "./images/christmas.jpg";
 
 class App extends React.Component {
   contextRef = createRef();
@@ -28,35 +28,40 @@ class App extends React.Component {
             isActive={false}
             available={0}
             maxAvailable={20}
-            image={christmas} />
+            image={christmas}
+          />
           <Attraction
             name="Christmas Train"
             description="Ride on a train choo choo!"
             isActive={true}
             available={1}
             maxAvailable={20}
-            image={christmas} />
+            image={christmas}
+          />
           <Attraction
             name="Christmas Train"
             description="Ride on a train choo choo!"
             isActive={true}
             available={2}
             maxAvailable={20}
-            image={christmas} />
+            image={christmas}
+          />
           <Attraction
             name="Christmas Train"
             description="Ride on a train choo choo!"
             isActive={true}
             available={3}
             maxAvailable={20}
-            image={christmas} />
+            image={christmas}
+          />
           <Attraction
             name="Christmas Train"
             description="Ride on a train choo choo!"
             isActive={true}
             available={4}
             maxAvailable={20}
-            image={christmas} />
+            image={christmas}
+          />
         </Card.Group>
         <p style={{ fontSize: "24pt" }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

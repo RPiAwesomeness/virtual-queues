@@ -10,9 +10,8 @@ export default class TitleBar extends React.Component {
       background: "#053864",
       padding: "20px",
       color: "white",
-      // position: "fixed",
-      overflow: "hidden"
-    }
+      overflow: "hidden",
+    };
   }
 
   onHelpClicked() {
@@ -22,7 +21,13 @@ export default class TitleBar extends React.Component {
   render() {
     return (
       <header style={this.style}>
-        <Button size="big" animated="vertical" onClick={this.onHelpClicked}>
+        <Button
+          icon
+          circular
+          size="big"
+          animated="vertical"
+          onClick={this.onHelpClicked}
+        >
           <Button.Content hidden>Help</Button.Content>
           <Button.Content visible>
             <Icon name="question circle outline" />
