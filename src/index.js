@@ -1,7 +1,7 @@
 import React, { createRef } from "react";
 import ReactDOM from "react-dom";
 
-import { Sticky, Card, Segment } from "semantic-ui-react";
+import { Sticky, Card } from "semantic-ui-react";
 
 import TitleBar from "./components/titlebar";
 import Attraction from "./components/attraction";

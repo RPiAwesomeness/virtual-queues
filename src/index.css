@@ -14,7 +14,6 @@ h2.ui.header {
 
 .ui.cards {
   overflow-x: scroll !important;
-  overflow-scrolling: scroll !important;
   flex-wrap: nowrap !important;
   white-space: nowrap !important;
 }

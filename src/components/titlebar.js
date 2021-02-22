@@ -1,12 +1,10 @@
 import React from "react";
 import { Button, Header, Icon } from "semantic-ui-react";
 
-class TitleBar extends React.Component {
+export default class TitleBar extends React.Component {
   constructor(props) {
     super(props);
     this.style = {
-      width: "100%",
-      minHeight: "10vh",
       display: "flex",
       justifyContent: "space-between",
       background: "#053864",
@@ -23,17 +21,15 @@ class TitleBar extends React.Component {
 
   render() {
     return (
-      <div style={this.style}>
-        <Button size="huge" animated="vertical" onClick={this.onHelpClicked}>
+      <header style={this.style}>
+        <Button size="big" animated="vertical" onClick={this.onHelpClicked}>
           <Button.Content hidden>Help</Button.Content>
           <Button.Content visible>
             <Icon name="question circle outline" />
           </Button.Content>
         </Button>
         <Header as="h2" content="CU Events" subheader="Virtual Queues" />
-      </div>
+      </header>
     );
   }
 }
-
-export { TitleBar as default };
