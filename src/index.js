@@ -15,6 +15,17 @@ class App extends React.Component {
   contextRef = createRef();
 
   render() {
+    fetch("http://18.222.7.110:3000/api/engagements")
+      .then((res) => res.json())
+      .then(
+        (res) => {
+          console.log(res);
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+
     return (
       <div ref={this.contextRef}>
         {/* TODO: Resolve bounce when scrolling */}

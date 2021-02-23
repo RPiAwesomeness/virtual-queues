@@ -21,14 +21,7 @@ export default class TitleBar extends React.Component {
   render() {
     return (
       <header style={this.style}>
-        <Button
-          icon
-          circular
-          size="big"
-          animated="vertical"
-          onClick={this.onHelpClicked}
-        >
-          <Button.Content hidden>Help</Button.Content>
+        <Button icon circular size="big" onClick={this.onHelpClicked}>
           <Button.Content visible>
             <Icon name="question circle outline" />
           </Button.Content>

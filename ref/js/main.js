@@ -1,7 +1,6 @@
-$(document).ready(function() {
-
+$(document).ready(function () {
   if ($(window).width() > 1080) {
-    alert('View on mobile device for best experience!');
+    alert("View on mobile device for best experience!");
   }
 
   // NOTIFICATION
@@ -10,15 +9,15 @@ $(document).ready(function() {
 
   // spin the loading icon spinIcon is called
   let degree = 0;
-  setInterval(function() {
+  setInterval(function () {
     degree += 2;
     if (degree >= 360) degree = 0;
-    $("#loading-icon").css('transform','rotate('+ degree +'deg)');
+    $("#loading-icon").css("transform", "rotate(" + degree + "deg)");
   }, 10);
   $("#loading").hide(); // hide the loading screen on start
 
   // set the event name in navbar
-  getEvent(function(results) {
+  getEvent(function (results) {
     if (results.length == 1) {
       $("#event-name").text(results[0].name);
     }
@@ -27,9 +26,9 @@ $(document).ready(function() {
   });
 
   // list all the attractions
-  getAllAttractions(function(results) {
-
-    results.forEach(attr => {
+  getAllAttractions(function (results) {
+    console.log(results);
+    results.data.forEach((attr) => {
       let $attraction = $("<div>");
       // photo
       let $photo = $("<div>").addClass("photo");
@@ -40,7 +39,18 @@ $(document).ready(function() {
       $body.append($("<h2>").text(attr.name));
       $body.append($("<p>").text(attr.description));
       // let $ticket = $("<div>").append($("<a>").addClass("ticket").attr("role", "button").attr("attr-id", attr._id).attr("attr-name", attr.name).attr("attr-min", attr.minGroupSize).attr("attr-max", attr.maxGroupSize).attr("href", "https://docs.google.com/forms/d/e/1FAIpQLScfzgoctR_29kV9dzpWSOx09eADnVICUmX24da4LjePgkelAA/viewform").attr("onclick", "attractionOverlay($(this))").append($("<i>").addClass("fa fa-ticket")));
-      let $ticket = $("<div>").append($("<a>").addClass("ticket").attr("onclick","attractionOverlay($(this))").attr("role", "button").attr("attr-id", attr._id).attr("attr-name", attr.name).attr("attr-min", attr.minGroupSize).attr("attr-max", attr.maxGroupSize).attr("attr-about",attr.about).append($("<i>").addClass("fa fa-ticket")));
+      let $ticket = $("<div>").append(
+        $("<a>")
+          .addClass("ticket")
+          .attr("onclick", "attractionOverlay($(this))")
+          .attr("role", "button")
+          .attr("attr-id", attr._id)
+          .attr("attr-name", attr.name)
+          .attr("attr-min", attr.minGroupSize)
+          .attr("attr-max", attr.maxGroupSize)
+          .attr("attr-about", attr.about)
+          .append($("<i>").addClass("fa fa-ticket"))
+      );
       $body.append($ticket);
       $attraction.append($body);
       // add attraction
@@ -49,27 +59,30 @@ $(document).ready(function() {
   });
 
   // info button
-  $("#info").click(function() {
+  $("#info").click(function () {
     $("#info-overlay").show();
     setOverlay();
   });
   // cancel buttons
-  $(".cancel").click(function() {
+  $(".cancel").click(function () {
     removeOverlay();
   });
   // slot chosen
-  $("#reserve").click(function() {
+  $("#reserve").click(function () {
     // show the loading screen
     $("#loading").show();
     // make the request to create the pass
-    let phone = $("#phone-number").attr("number").length == 10 ? "1" + $("#phone-number").attr("number") : $("#phone-number").attr("number");
+    let phone =
+      $("#phone-number").attr("number").length == 10
+        ? "1" + $("#phone-number").attr("number")
+        : $("#phone-number").attr("number");
     let params = {
       slotID: $(".slot-selected").attr("slot-id"),
       // groupSize: $("#group-size").text(),
       groupSize: 1,
-      phone: "+" + phone
+      phone: "+" + phone,
     };
-    createPass(params, function(results) {
+    createPass(params, function (results) {
       $("#loading").hide();
       if (results.error) {
         // there was an error, go back to the attraction screen and update the slots and show error
@@ -90,24 +103,22 @@ $(document).ready(function() {
   });
 
   // logic for group counter
-  $("#group-counter-plus").click(function() {
+  $("#group-counter-plus").click(function () {
     let currSize = $("#group-size").text();
     currSize = isNaN(parseInt(currSize)) ? 0 : parseInt(currSize); // sanitize
     $("#group-size").text(currSize + 1);
     updateGroupCounter();
   });
-  $("#group-counter-minus").click(function() {
+  $("#group-counter-minus").click(function () {
     let currSize = $("#group-size").text();
     currSize = isNaN(parseInt(currSize)) ? 0 : parseInt(currSize); // sanitize
     $("#group-size").text(currSize - 1);
     updateGroupCounter();
   });
-
 });
 
 // function sets the overlay for an attraction when ticket is clicked
-function attractionOverlay($this)
-{
+function attractionOverlay($this) {
   // show the overlay
   $("#attraction-overlay").show();
   setOverlay();
@@ -115,8 +126,7 @@ function attractionOverlay($this)
   configureOverlay($this);
 }
 
-function configureOverlay($this)
-{
+function configureOverlay($this) {
   console.log($this.attr("attr-min"));
   // console.log($this);
   $("#error-message").hide(); // hide the error message
@@ -125,21 +135,29 @@ function configureOverlay($this)
   // $("#selected-attr-max").text($this.attr("attr-max"));
   $("#selected-attr-about").text($this.attr("attr-about"));
   // configure the group counter with the min and max group size
-  setGroupCounter(parseInt($this.attr("attr-min")), parseInt($this.attr("attr-max")));
+  setGroupCounter(
+    parseInt($this.attr("attr-min")),
+    parseInt($this.attr("attr-max"))
+  );
   // set the slots
   $("#slots").empty();
   $("#slots-message").show();
   $("#slots-message").text("Gathering time slots...");
-  getAttractionSlots($this.attr("attr-id"), function(results) {
-    results.sort(function(a, b) {
+  getAttractionSlots($this.attr("attr-id"), function (results) {
+    results.sort(function (a, b) {
       if (a.disappear < b.disappear) return -1;
       else if (a.disappear > b.disappear) return 1;
       else return 0;
-    })
+    });
     // console.log(results);
-    results.forEach(slot => {
+    results.data.forEach((slot) => {
       console.log(slot);
-      let $slot = $("<a>").addClass("slot").attr("onclick", "selectSlot($(this))").attr("curr-capacity", slot.capacity - slot.waiting).attr("slot-id", slot._id).text(slot.label);
+      let $slot = $("<a>")
+        .addClass("slot")
+        .attr("onclick", "selectSlot($(this))")
+        .attr("curr-capacity", slot.capacity - slot.waiting)
+        .attr("slot-id", slot._id)
+        .text(slot.label);
       $("#slots").append($slot);
     });
     updateSlots();
@@ -149,22 +167,20 @@ function configureOverlay($this)
 // db.slots.insert([{attractionID: ObjectId("5fadbe31d9abd01c4b821323"), label: "12:10PM", capacity: 3, disappear:87000},{attractionID: ObjectId("5fadbe31d9abd01c4b821323"), label: "12:30PM", capacity: 3, disappear:88200}])
 
 // sets the counter initially with min and max values
-function setGroupCounter(min, max)
-{
+function setGroupCounter(min, max) {
   $("#group-counter").attr("min", min);
   $("#group-counter").attr("max", max);
   $("#group-size").text(min);
   if (min == max) {
-    $("#group-counter-plus").prop('disabled', true);
-    $("#group-counter-minus").prop('disabled', true);
+    $("#group-counter-plus").prop("disabled", true);
+    $("#group-counter-minus").prop("disabled", true);
   } else {
-    $("#group-counter-plus").prop('disabled', false);
-    $("#group-counter-minus").prop('disabled', true);
+    $("#group-counter-plus").prop("disabled", false);
+    $("#group-counter-minus").prop("disabled", true);
   }
 }
 
-function updateGroupCounter()
-{
+function updateGroupCounter() {
   let currSize = $("#group-size").text();
   let min = $("#group-counter").attr("min");
   let max = $("#group-counter").attr("max");
@@ -176,21 +192,20 @@ function updateGroupCounter()
   }
   // disable buttons if on edge of allowed range
   if (currSize == max) {
-    $("#group-counter-plus").prop('disabled', true);
+    $("#group-counter-plus").prop("disabled", true);
   } else if (currSize == min) {
-    $("#group-counter-minus").prop('disabled', true);
+    $("#group-counter-minus").prop("disabled", true);
   } else {
-    $("#group-counter-plus").prop('disabled', false);
-    $("#group-counter-minus").prop('disabled', false);
+    $("#group-counter-plus").prop("disabled", false);
+    $("#group-counter-minus").prop("disabled", false);
   }
   // update the slots based on the new group size
   updateSlots();
 }
 
-function updateSlots()
-{
+function updateSlots() {
   let available = false;
-  $(".slot").each(function() {
+  $(".slot").each(function () {
     // if ($(this).attr("curr-capacity") >= parseInt($("#group-size").text())) {
     // for the time being, all passes are for 1 person
     console.log($(this).attr("curr-capacity"));
@@ -205,7 +220,9 @@ function updateSlots()
   // post sorry message if no slots are available
   if (!available) {
     $("#slots").hide();
-    $("#slots-message").text("Sorry, no time slots are available for that group size.");
+    $("#slots-message").text(
+      "Sorry, no time slots are available for that group size."
+    );
     $("#slots-message").show();
   } else {
     $("#slots").show();
@@ -214,8 +231,7 @@ function updateSlots()
   toggleButtonIfComplete();
 }
 
-function formatPhone()
-{
+function formatPhone() {
   // put text in number attribute
   let text = $("#phone-number").val();
   let numbers = text.replace(/[^\d]/g, "");
@@ -223,52 +239,53 @@ function formatPhone()
   if (numbers.length == 0) {
     formatted = "";
   } else if (numbers.length < 4) {
-    formatted = numbers.substring(0,3);
+    formatted = numbers.substring(0, 3);
   } else if (numbers.length < 7) {
-    formatted = `${numbers.substring(0,3)}-${numbers.substring(3,6)}`;
+    formatted = `${numbers.substring(0, 3)}-${numbers.substring(3, 6)}`;
   } else if (numbers.length < 11) {
-    formatted = `${numbers.substring(0,3)}-${numbers.substring(3,6)}-${numbers.substring(6,10)}`;
+    formatted = `${numbers.substring(0, 3)}-${numbers.substring(
+      3,
+      6
+    )}-${numbers.substring(6, 10)}`;
   } else {
-    formatted = `+${numbers.substring(0,1)} ${numbers.substring(1,4)}-${numbers.substring(4,7)}-${numbers.substring(7,11)}`;
+    formatted = `+${numbers.substring(0, 1)} ${numbers.substring(
+      1,
+      4
+    )}-${numbers.substring(4, 7)}-${numbers.substring(7, 11)}`;
   }
   $("#phone-number").attr("number", numbers);
   $("#phone-number").val(formatted);
 }
 
-function toggleButtonIfComplete()
-{
+function toggleButtonIfComplete() {
   let phone = $("#phone-number").attr("number");
-  let selectedSlot = $(".slot-selected").length == 1
+  let selectedSlot = $(".slot-selected").length == 1;
   if ((phone.length == 10 || phone.length == 11) && selectedSlot) {
-    $('#reserve').prop('disabled', false);
+    $("#reserve").prop("disabled", false);
   } else {
-    $('#reserve').prop('disabled', true);
+    $("#reserve").prop("disabled", true);
   }
 }
 
-function setOverlay()
-{
-  $('#wrapper').addClass("no-scroll");
-  $('#wrapper').addClass("blur");
-  $('#navbar').addClass("blur");
+function setOverlay() {
+  $("#wrapper").addClass("no-scroll");
+  $("#wrapper").addClass("blur");
+  $("#navbar").addClass("blur");
 }
 
-function removeOverlay()
-{
+function removeOverlay() {
   $(".overlay").hide();
-  $('#wrapper').removeClass("no-scroll");
-  $('#wrapper').removeClass("blur");
-  $('#navbar').removeClass("blur");
+  $("#wrapper").removeClass("no-scroll");
+  $("#wrapper").removeClass("blur");
+  $("#navbar").removeClass("blur");
 }
 
-function setMarginOffset()
-{
+function setMarginOffset() {
   let $wrapper = $("#wrapper");
   $wrapper.css("margin-top", $("#navbar").height());
 }
 
-function selectSlot($selected)
-{
+function selectSlot($selected) {
   $(".slot").removeClass("slot-selected");
   $selected.addClass("slot-selected");
   toggleButtonIfComplete();
@@ -278,40 +295,40 @@ function selectSlot($selected)
 // functions for interfacing with backend
 //
 
-function getAllAttractions(callback)
-{
-  let url = "http://18.222.7.110:3000/api/queues/attractions";
+function getAllAttractions(callback) {
+  let url = "http://18.222.7.110:3000/api/events";
   // make the request
-  $.get(url, function(results) {
+  $.get(url, function (results) {
     callback(results);
   });
 }
 
-function getAttractionSlots(id, callback)
-{
-  let url = `http://18.222.7.110:3000/api/queues/attractions/${id}/slots`;
+function getAttractionSlots(id, callback) {
+  let url = `http://18.222.7.110:3000/api/attractions/${id}/slots`;
   // make the request
-  $.get(url, function(results) {
+  $.get(url, function (results) {
     callback(results);
   });
 }
 
-function getEvent(callback)
-{
-  let url = "http://18.222.7.110:3000/api/queues/events";
+function getEvent(callback) {
+  let url = "http://18.222.7.110:3000/api/events";
   // make the request
-  $.get(url, function(results) {
+  $.get(url, function (results) {
     callback(results);
   });
 }
 
-function createPass(params, callback)
-{
-  let url = `http://18.222.7.110:3000/api/queues/slots/${params.slotID}/passes`;
+function createPass(params, callback) {
+  let url = `http://18.222.7.110:3000/api/slots/${params.slotID}/passes`;
   // make the request
   // console.log(params.phone);
   // console.log(params.groupSize);
-  $.post(url, {phone: params.phone, groupSize: params.groupSize}, function(results) {
-    callback(results);
-  });
+  $.post(
+    url,
+    { phone: params.phone, groupSize: params.groupSize },
+    function (results) {
+      callback(results);
+    }
+  );
 }
