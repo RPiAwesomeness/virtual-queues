@@ -5,6 +5,7 @@ export default class Attraction extends React.Component {
   constructor(props) {
     super(props);
     this.name = props.name;
+    this.id = props.id;
     this.description = props.description;
     this.active = props.isActive;
     this.available = props.available;
