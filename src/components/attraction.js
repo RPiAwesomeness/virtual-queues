@@ -11,6 +11,7 @@ export default class Attraction extends React.Component {
         this.available = props.available;
         this.maxAvailable = props.maxAvailable;
         this.img = props.imageURL;
+
     }
 
   render() {
