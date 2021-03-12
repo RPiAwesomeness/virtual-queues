@@ -11,7 +11,7 @@ export default class Attraction extends React.Component {
         this.available = props.available;
         this.maxAvailable = props.maxAvailable;
         this.img = props.imageURL;
-
+        this.endTime = props.endTime;
     }
 
   render() {
@@ -29,6 +29,7 @@ export default class Attraction extends React.Component {
           </div>
           <div>
             <Icon name="clock outline" />
+            {this.endTime.toLocaleString("en-US")}
           </div>
         </Card.Content>
       </Card>
