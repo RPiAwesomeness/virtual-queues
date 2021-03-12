@@ -1,10 +1,11 @@
 import React, { createRef } from "react";
 import ReactDOM from "react-dom";
 
-import { Sticky, Card } from "semantic-ui-react";
+import { Button, Sticky, Card } from "semantic-ui-react";
 
 import TitleBar from "./components/titlebar";
 import Attraction from "./components/attraction";
+import CardModal from "./components/cardmodal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -32,6 +33,12 @@ class App extends React.Component {
         <Sticky context={this.contextRef}>
           <TitleBar />
         </Sticky>
+        <CardModal name="Christmas Train"
+            description="Ride on a train choo choo!"
+            isActive={false}
+            available={30}
+            maxAvailable={20}
+            image={christmas}/>
         <Card.Group>
           <Attraction
             name="Christmas Train"
@@ -73,7 +80,7 @@ class App extends React.Component {
             maxAvailable={20}
             image={christmas}
           />
-        </Card.Group>
+            </Card.Group>
         <p style={{ fontSize: "24pt" }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Integer
