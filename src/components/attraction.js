@@ -12,54 +12,62 @@ export default class Attraction extends React.Component {
     this.active = props.isActive;
     this.img = props.imageURL;
     this.endTime = props.endTime;
-    this.slots = props.slots !== undefined ? props.slots : [];
+    
+    let slots = props.slots !== undefined
+      ? props.slots.map((slot) => {
+        slot.taken = 0;
+        return slot;
+      })
+      : [];
     this.state = {
-      slotsTaken: 0,
+      slots: slots
     };
 
-    // this.slots.reduce((acc, val) => {
+    // this.state.slots.reduce((acc, val) => {
     //     acc[val._id] = props.slots.ticket_capacity;
     //     return acc;
     //   }, {})
 
     this.getTicketsAvailable = this.getTicketsAvailable.bind(this);
+  }
+
+  componentDidMount() {
     this.getTicketsAvailable();
   }
 
   getTicketsAvailable() {
-    fetch("http://18.222.7.110:3000/api/tickets/")
-      .then((res) => res.json())
-      .then(
-        (res) => {
-          if (res.status !== "success") {
-            console.log("Failed to retrieve available tickets");
-            console.log(res.message);
+    this.state.slots.forEach(({_id}, idx) => {
+      fetch(`http://18.222.7.110:3000/api/slots/${_id}/tickets/`)
+        .then((res) => res.json())
+        .then(
+          (res) => {
+            if (res.status !== "success") {
+              console.log("Failed to retrieve available tickets");
+              console.log(res.message);
+            }
+
+            console.debug("Taken:", this.state.slotsTaken);
+            console.debug("Slot ID:", this.id);
+            console.debug("Retrieved:", res.data);
+
+            // Get copy of slots array
+            const newSlots = this.state.slots.slice();
+            newSlots[idx].taken = res.data.length;
+
+            this.setState({ slots: newSlots });
+          },
+          (err) => {
+            console.error("Failed to retrieve available tickets");
+            console.error(err);
           }
-
-          console.log("Taken:", this.state.slotsTaken);
-          console.log("Retrieved:", res.data);
-          console.log("Slot ID:", this.id);
-
-          const slotTickets = res.data.reduce(
-            (acc, { slot_id }) => (slot_id === this.id ? acc + 1 : acc),
-            0
-          );
-
-          this.setState({
-            slotsTaken: slotTickets,
-          });
-        },
-        (err) => {
-          console.error("Failed to retrieve available tickets");
-          console.error(err);
-        }
-      );
+        );
+    });
   }
 
   render() {
-    let slotCapacity = this.slots.reduce(
-      (acc, slot) => acc + slot.ticket_capacity,
-      0
+    let [maxCapacity, takenSlots] = this.state.slots.reduce(
+      (acc, slot) => [acc[0] + slot.ticket_capacity, acc[1] + slot.taken],
+      [0, 0]
     );
 
     return (
@@ -71,15 +79,11 @@ export default class Attraction extends React.Component {
         </Card.Content>
         <Card.Content extra>
           <div>
-            <Icon name="user outline" />
-            {slotCapacity - this.state.slotsTaken}/{slotCapacity} available
+            <Icon name="user" />
+            {maxCapacity - takenSlots}/{maxCapacity} available of {this.state.slots.length} slots
           </div>
           <div>
-            <Icon name="clock outline" />
-            {this.slots.length} slots available
-          </div>
-          <div>
-            <Icon name="close" />
+            <Icon name="clock" />
             End Time: {this.endTime.toLocaleString("en-US")}
           </div>
         </Card.Content>

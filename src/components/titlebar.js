@@ -21,16 +21,18 @@ export default class TitleBar extends React.Component {
   render() {
     return (
       <header style={this.style}>
-        <Button icon circular size="big" onClick={this.onHelpClicked}>
-          <Button.Content visible>
-            <Icon name="question circle outline" />
-          </Button.Content>
-        </Button>
-        <Button icon circular size="big">
-          <Button.Content visible>
-            <Icon name="question user outline" />
-          </Button.Content>
-        </Button>
+        <div id="nav-buttons">
+          <Button icon circular size="big" onClick={this.onHelpClicked}>
+            <Button.Content visible>
+              <Icon name="question circle outline" />
+            </Button.Content>
+          </Button>
+          <Button icon circular size="big">
+            <Button.Content visible>
+              <Icon name="user outline" />
+            </Button.Content>
+          </Button>
+        </div>
         <Header as="h2" content="CU Events" subheader="Virtual Queues" />
       </header>
     );

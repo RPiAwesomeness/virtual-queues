@@ -20,8 +20,6 @@ class App extends React.Component {
   };
   apiBaseURL = "http://18.222.7.110:3000/api";
 
-  getAllEvents() {}
-
   getAttractionSlots() {
     fetch(this.apiBaseURL + "/slots")
       .then((res) => res.json())
