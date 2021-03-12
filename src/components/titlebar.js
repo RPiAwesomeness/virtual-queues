@@ -26,6 +26,11 @@ export default class TitleBar extends React.Component {
             <Icon name="question circle outline" />
           </Button.Content>
         </Button>
+        <Button icon circular size="big">
+          <Button.Content visible>
+            <Icon name="question user outline" />
+          </Button.Content>
+        </Button>
         <Header as="h2" content="CU Events" subheader="Virtual Queues" />
       </header>
     );

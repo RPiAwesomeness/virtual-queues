@@ -13,38 +13,97 @@ class App extends React.Component {
   contextRef = createRef();
   state = {
     error: null,
-    isLoaded: false,
-    items: []
+    loadedAttractions: false,
+    loadedSlots: false,
+    items: {},
+    slots: {},
   };
   apiBaseURL = "http://18.222.7.110:3000/api";
-  numEventColumns = 4;
 
   getAllEvents() {}
 
-  getAttractionSlots() {}
-
-  getAllEngagements() {
-    // Get current attractions
-    fetch(this.apiBaseURL + "/attractions")
-      .then(res => res.json())
+  getAttractionSlots() {
+    fetch(this.apiBaseURL + "/slots")
+      .then((res) => res.json())
       .then(
         (res) => {
-          console.log("Response:", res.data);
-          this.setState({isLoaded: true, items: res.data});
+          if (res.status !== "success") {
+            console.error("Failed to retrieve slots");
+            console.error("Error:", res.message);
+            return;
+          }
+
+          // Reduce array to object with attraction ID as key and all slots
+          // for each attraction
+          let initVal = {};
+          let slots = res.data.reduce(
+            (acc, val) => ({
+              ...acc,
+              [val.attraction_id]: [...(acc[val.attraction_id] || []), val],
+            }),
+            initVal
+          );
+          console.debug("Slots:", slots);
+
+          // Update with retrieved slots
+          this.setState({
+            loadedSlots: true,
+            error: "",
+            slots: slots,
+          });
         },
         (err) => {
-          this.setState({isLoaded: true, err});
+          console.error("Failed to retrieve slots");
+          console.error(err);
+          this.setState({ loadedSlots: true, err: "Failed to load slots" });
+        }
+      );
+  }
+
+  getAllAttractions() {
+    // Get current attractions
+    fetch(this.apiBaseURL + "/attractions")
+      .then((res) => res.json())
+      .then(
+        (res) => {
+          if (res.status !== "success") {
+            console.error("Failed to retrieve attractions");
+            console.error("Error:", res.message);
+            return;
+          }
+
+          // Indicate attractions have been loaded
+          console.debug("Attractions:", res.data);
+          let attractions = res.data.reduce((acc, val) => {
+            acc[val._id] = val;
+            return acc;
+          }, {});
+          this.setState({
+            loadedAttractions: true,
+            items: attractions,
+          });
+        },
+        (err) => {
+          console.error("Failed to retrieve attractions");
+          console.error(err);
+          this.setState({
+            loadedAttractions: true,
+            error: "Failed to load attractions",
+          });
         }
       );
   }
 
   render() {
-    const { error, isLoaded } = this.state;
+    const { error, loadedAttractions, loadedSlots } = this.state;
 
     if (error) {
       return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      this.getAllEngagements();
+    } else if (!loadedAttractions) {
+      this.getAllAttractions();
+    } else if (loadedAttractions && !loadedSlots) {
+      // Get slots available for attractions based on attraction ID
+      this.getAttractionSlots();
     }
 
     return (
