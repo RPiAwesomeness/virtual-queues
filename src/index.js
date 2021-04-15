@@ -5,6 +5,7 @@ import { Sticky } from "semantic-ui-react";
 
 import TitleBar from "./components/titlebar";
 import Engagements from "./components/engagements";
+import Toast from "./components/toast";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -17,6 +18,12 @@ class App extends React.Component {
     loadedSlots: false,
     items: {},
     slots: {},
+    toast: {
+      visible: false,
+      header: "",
+      success: true,
+      message: "",
+    },
   };
   apiBaseURL = "http://18.222.7.110:3000/api";
 
@@ -109,8 +116,9 @@ class App extends React.Component {
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
           <TitleBar />
-          <Engagements {...this.state} />
         </Sticky>
+        <Engagements {...this.state} />
+        <Toast {...this.state.toast} />
       </div>
     );
   }
