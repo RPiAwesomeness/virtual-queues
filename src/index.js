@@ -4,8 +4,8 @@ import ReactDOM from "react-dom";
 import { Sticky } from "semantic-ui-react";
 
 import TitleBar from "./components/titlebar";
-import Engagements from "./components/engagements";
-import Toast from "./components/toast";
+import Events from "./components/events";
+import { StudentModal } from "./components/studentModal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -16,6 +16,11 @@ class App extends React.Component {
     error: null,
     loadedAttractions: false,
     loadedSlots: false,
+    student: {
+      id: -1,
+      tickets: {},
+      modalVisible: false,
+    },
     items: {},
     slots: {},
     toast: {
@@ -26,6 +31,29 @@ class App extends React.Component {
     },
   };
   apiBaseURL = "http://18.222.7.110:3000/api";
+
+  /**
+   * This function will be passed into the TitleBar constructor to allow
+   * us to control the fullscreen modal here at the root level.
+   */
+  getStudentID() {
+    if (this.state.student.id === -1) {
+      // Have to retrieve student ID, it is not currently set
+      this.setState({ student: { modalVisible: true, id: 2030758 } });
+    }
+  }
+
+  getStudentTickets() {
+    fetch("http://18.222.7.110:3000/api/tickets/")
+      .then((res) => res.json())
+      .then(
+        (res) => {
+          // Filter tickets specific to this student
+          console.log(res);
+        },
+        (err) => console.error(err)
+      );
+  }
 
   getAttractionSlots() {
     fetch(this.apiBaseURL + "/slots")
@@ -113,12 +141,12 @@ class App extends React.Component {
 
     return (
       <div ref={this.contextRef}>
+        <StudentModal visible={this.state.student.modalVisible} />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
-          <TitleBar />
+          <TitleBar getStudentTickets={this.getStudentTickets} />
         </Sticky>
-        <Engagements {...this.state} />
-        <Toast {...this.state.toast} />
+        <Events {...this.state} />
       </div>
     );
   }

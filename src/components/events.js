@@ -2,7 +2,7 @@ import { Grid, Placeholder } from "semantic-ui-react";
 
 import Attraction from "./attraction";
 
-const Engagements = (props) => {
+const Events = (props) => {
   const numEventColumns = 4;
   const { loadedAttractions, loadedSlots, items, slots } = props;
 
@@ -71,4 +71,4 @@ const Engagements = (props) => {
   );
 };
 
-export default Engagements;
+export default Events;

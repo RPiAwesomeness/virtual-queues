@@ -4,6 +4,9 @@ import { Button, Header, Icon } from "semantic-ui-react";
 export default class TitleBar extends React.Component {
   constructor(props) {
     super(props);
+
+    this.getStudentTickets = props.getStudentTickets;
+
     this.style = {
       display: "flex",
       justifyContent: "space-between",
@@ -27,7 +30,7 @@ export default class TitleBar extends React.Component {
               <Icon name="question circle outline" />
             </Button.Content>
           </Button>
-          <Button icon circular size="big">
+          <Button icon circular size="big" onClick={this.getStudentTickets}>
             <Button.Content visible>
               <Icon name="user outline" />
             </Button.Content>
