@@ -5,13 +5,15 @@ import { Sticky } from "semantic-ui-react";
 
 import TitleBar from "./components/titlebar";
 import Events from "./components/events";
-import { StudentModal } from "./components/studentModal";
+import StudentModal from "./components/studentModal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
 
 class App extends React.Component {
   contextRef = createRef();
+  modalRef = createRef();
+
   state = {
     error: null,
     loadedAttractions: false,
@@ -19,31 +21,33 @@ class App extends React.Component {
     student: {
       id: -1,
       tickets: {},
-      modalVisible: false,
     },
     items: {},
     slots: {},
-    toast: {
-      visible: false,
-      header: "",
-      success: true,
-      message: "",
-    },
   };
   apiBaseURL = "http://18.222.7.110:3000/api";
 
+  constructor(props) {
+    super(props);
+
+    this.showStudentModal = this.showStudentModal.bind(this);
+    this.getAttractionSlots = this.getAttractionSlots.bind(this);
+    this.getAllAttractions = this.getAllAttractions.bind(this);
+  }
+
   /**
-   * This function will be passed into the TitleBar constructor to allow
-   * us to control the fullscreen modal here at the root level.
+   * Opens the student account modal
    */
-  getStudentID() {
-    if (this.state.student.id === -1) {
-      // Have to retrieve student ID, it is not currently set
-      this.setState({ student: { modalVisible: true, id: 2030758 } });
-    }
+  showStudentModal() {
+    this.modalRef.current.setState({ open: true });
   }
 
   getStudentTickets() {
+    if (this.state.student.id === -1) {
+      // Unable to retrieve tickets for specific user
+      return;
+    }
+
     fetch("http://18.222.7.110:3000/api/tickets/")
       .then((res) => res.json())
       .then(
@@ -141,10 +145,10 @@ class App extends React.Component {
 
     return (
       <div ref={this.contextRef}>
-        <StudentModal visible={this.state.student.modalVisible} />
+        <StudentModal ref={this.modalRef} />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
-          <TitleBar getStudentTickets={this.getStudentTickets} />
+          <TitleBar getStudentTickets={this.showStudentModal} />
         </Sticky>
         <Events {...this.state} />
       </div>
