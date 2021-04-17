@@ -145,7 +145,7 @@ class App extends React.Component {
 
     return (
       <div ref={this.contextRef}>
-        <StudentModal ref={this.modalRef} />
+        <StudentModal header="Student Profile" ref={this.modalRef} />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
           <TitleBar getStudentTickets={this.showStudentModal} />

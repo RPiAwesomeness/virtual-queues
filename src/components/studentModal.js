@@ -1,5 +1,6 @@
 import React, { createRef } from "react";
 import { Button, Modal, Icon, Table } from "semantic-ui-react";
+
 import StudentIdInput from "./studentIdInput";
 
 class StudentModal extends React.Component {
@@ -36,7 +37,7 @@ class StudentModal extends React.Component {
               onClick={() =>
                 this.setState({
                   open: false,
-                  studentID: this.idRef.current.value,
+                  studentID: this.idRef.current.getId(),
                 })
               }
             >

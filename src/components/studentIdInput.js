@@ -1,6 +1,60 @@
-import React from "react";
+import React, { createRef } from "react";
 import { Input } from "semantic-ui-react";
 
-const StudentIdInput = () => <Input label="User ID" placeholder="0000000" />;
+class StudentIdInput extends React.Component {
+  inputRef = createRef();
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      error: false
+    };
+
+    this.validateId = this.validateId.bind(this);
+    this.getId = this.getId.bind(this);
+  }
+
+  getId() {
+    return this.inputRef.current.inputRef.current.value;
+  }
+
+  /**
+   * Validates the ID value passed, returning validity of that ID
+   * 
+   * @returns Validity of ID string passed in
+   */
+  validateId(val) {
+    // const idVal = this.inputRef.current.inputRef.current.value;
+    if (val === "") {
+      // No content, no validation errors
+      return false;
+    }
+
+    // Validate that this is a long enough string
+    if (val.length != 7) {
+      return true;
+    }
+    
+    // Validate that this is a valid number within the expected range
+    if (isNaN(val) || val < 1000000) {
+      return true;
+    }
+
+    // Made it to the end, no errors!
+    return false;
+  }
+
+  render() {
+    return (
+      <Input
+        label="User ID"
+        placeholder="0000000"
+        onChange={(_, val) => {this.setState({error: this.validateId(val.value)})}}
+        error={this.state.error}
+        ref={this.inputRef} />
+    );
+  }
+}
 
 export default StudentIdInput;
