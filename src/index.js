@@ -19,8 +19,8 @@ class App extends React.Component {
     loadedAttractions: false,
     loadedSlots: false,
     student: {
-      id: -1,
-      tickets: {},
+      id: undefined,
+      tickets: [],
     },
     items: {},
     slots: {},
@@ -33,27 +33,49 @@ class App extends React.Component {
     this.showStudentModal = this.showStudentModal.bind(this);
     this.getAttractionSlots = this.getAttractionSlots.bind(this);
     this.getAllAttractions = this.getAllAttractions.bind(this);
+    this.handleModalIdSubmit = this.handleModalIdSubmit.bind(this);
   }
 
   /**
    * Opens the student account modal
    */
   showStudentModal() {
-    this.modalRef.current.setState({ open: true });
+    this.getStudentTickets().then(() => {
+      this.modalRef.current.setState({
+        open: true,
+        tickets: this.state.student.tickets,
+        studentId: this.state.student.id,
+      });
+    });
   }
 
+  /**
+   * Retrieve tickets based on user ID
+   *
+   * @returns Promise from API retrieval if student ID is defined, otherwise an
+   *          empty promise
+   */
   getStudentTickets() {
-    if (this.state.student.id === -1) {
+    if (this.state.student.id === undefined) {
       // Unable to retrieve tickets for specific user
-      return;
+      return new Promise();
     }
 
-    fetch("http://18.222.7.110:3000/api/tickets/")
+    return fetch("http://18.222.7.110:3000/api/tickets/")
       .then((res) => res.json())
       .then(
         (res) => {
-          // Filter tickets specific to this student
           console.log(res);
+
+          // Filter tickets specific to this student
+          const userTickets = res.data.filter(
+            (val) => val.student_id.toString() === this.state.student.id
+          );
+
+          // Update state
+          this.setState((prevState) => ({
+            student: { ...prevState.student, tickets: userTickets },
+          }));
         },
         (err) => console.error(err)
       );
@@ -131,6 +153,23 @@ class App extends React.Component {
       );
   }
 
+  handleModalIdSubmit(id) {
+    // TODO: Clean up this callback hell. Ideally the modal state should
+    //       rely on the main app's state
+    // Update local state with new student ID, retrieving new tickets after
+    this.setState(
+      (prevState) => ({
+        student: { ...prevState.student, id: id },
+      }),
+      () =>
+        this.getStudentTickets().then(() =>
+          this.modalRef.current.setState({
+            tickets: this.state.student.tickets,
+          })
+        )
+    );
+  }
+
   render() {
     const { error, loadedAttractions, loadedSlots } = this.state;
 
@@ -145,7 +184,11 @@ class App extends React.Component {
 
     return (
       <div ref={this.contextRef}>
-        <StudentModal header="Student Profile" ref={this.modalRef} />
+        <StudentModal
+          header="Student Profile"
+          ref={this.modalRef}
+          onIdSubmit={this.handleModalIdSubmit}
+        />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
           <TitleBar getStudentTickets={this.showStudentModal} />

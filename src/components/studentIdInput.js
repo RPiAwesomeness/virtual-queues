@@ -8,11 +8,13 @@ class StudentIdInput extends React.Component {
     super(props);
 
     this.state = {
-      error: false
+      error: false,
     };
 
     this.validateId = this.validateId.bind(this);
     this.getId = this.getId.bind(this);
+
+    this.handleSubmit = props.onSubmit;
   }
 
   getId() {
@@ -21,38 +23,40 @@ class StudentIdInput extends React.Component {
 
   /**
    * Validates the ID value passed, returning validity of that ID
-   * 
+   *
    * @returns Validity of ID string passed in
    */
   validateId(val) {
-    // const idVal = this.inputRef.current.inputRef.current.value;
-    if (val === "") {
-      // No content, no validation errors
+    // Validate that this is a long enough string
+    if (val.length !== 7) {
       return false;
     }
 
-    // Validate that this is a long enough string
-    if (val.length != 7) {
-      return true;
-    }
-    
     // Validate that this is a valid number within the expected range
     if (isNaN(val) || val < 1000000) {
-      return true;
+      return false;
     }
 
     // Made it to the end, no errors!
-    return false;
+    return true;
   }
 
   render() {
     return (
       <Input
-        label="User ID"
+        defaultValue={this.props.studentId}
         placeholder="0000000"
-        onChange={(_, val) => {this.setState({error: this.validateId(val.value)})}}
+        onChange={(_, val) => {
+          this.setState({ error: !this.validateId(val.value) });
+        }}
         error={this.state.error}
-        ref={this.inputRef} />
+        ref={this.inputRef}
+        action={{
+          color: "green",
+          content: "Save",
+          onClick: this.handleSubmit,
+        }}
+      />
     );
   }
 }

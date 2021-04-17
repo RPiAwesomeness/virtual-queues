@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { Button, Modal, Icon, Table } from "semantic-ui-react";
+import { Header, Modal, Table } from "semantic-ui-react";
 
 import StudentIdInput from "./studentIdInput";
 
@@ -9,84 +9,64 @@ class StudentModal extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleIdSubmit = props.onIdSubmit;
+    this.header = props.header;
     this.state = {
-      tickets: props.tickets === undefined ? {} : props.tickets,
-      header: props.header,
+      tickets: props.tickets === undefined ? [] : props.tickets,
       open: props.open === undefined ? false : props.open,
-      studentID: props.studentID,
+      studentId: props.studentId === undefined ? "000000" : props.studentId,
     };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit() {
+    const newId = this.idRef.current.getId();
+    if (this.state.studentId === newId) {
+      // No changes were made, do nothing
+      return;
+    }
+
+    // The ID changed, update state and retrieved tickets
+    this.setState({ studentId: newId });
+    this.handleIdSubmit(newId);
   }
 
   render() {
-    if (this.state.studentID === undefined) {
-      return (
-        <Modal
-          size="small"
-          onClose={() => this.setState({ open: false })}
-          onOpen={() => this.setState({ open: true })}
-          open={this.state.open}
-        >
-          <Modal.Header>{this.state.header}</Modal.Header>
-          <Modal.Content>
-            <StudentIdInput ref={this.idRef} />
-          </Modal.Content>
-          <Modal.Actions>
-            <Button
-              basic
-              color="green"
-              onClick={() =>
-                this.setState({
-                  open: false,
-                  studentID: this.idRef.current.getId(),
-                })
-              }
-            >
-              <Icon name="check" />
-              Okay
-            </Button>
-          </Modal.Actions>
-        </Modal>
-      );
-    }
-
     return (
       <Modal
+        closeIcon
+        size="small"
         onClose={() => this.setState({ open: false })}
         onOpen={() => this.setState({ open: true })}
         open={this.state.open}
       >
-        <Modal.Header>{this.state.header}</Modal.Header>
+        <Modal.Header>{this.header}</Modal.Header>
         <Modal.Content>
-          <Modal.Description>
-            <Table celled padded>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Event</Table.HeaderCell>
-                  <Table.HeaderCell>Ticket ID</Table.HeaderCell>
+          <Header>Tickets Available</Header>
+          <Table celled padded>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Event</Table.HeaderCell>
+                <Table.HeaderCell>Ticket ID</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {this.state.tickets.map((val) => (
+                <Table.Row key={val._id}>
+                  <Table.Cell>{val.slot_id}</Table.Cell>
+                  <Table.Cell>{val._id}</Table.Cell>
                 </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {Object.entries(this.state.tickets).map(([key, val]) => (
-                  <Table.Row>
-                    <Table.Cell>{key}</Table.Cell>
-                    <Table.Cell>{val}</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </Modal.Description>
+              ))}
+            </Table.Body>
+          </Table>
+          <Header>Student ID</Header>
+          <StudentIdInput
+            onSubmit={this.handleSubmit}
+            studentId={this.state.studentId}
+            ref={this.idRef}
+          />
         </Modal.Content>
-        <Modal.Actions>
-          <Button
-            basic
-            color="blue"
-            inverted
-            onClick={() => this.setState({ open: false })}
-          >
-            <Icon name="close" />
-            Okay
-          </Button>
-        </Modal.Actions>
       </Modal>
     );
   }
