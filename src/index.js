@@ -22,7 +22,7 @@ class App extends React.Component {
       id: undefined,
       tickets: [],
     },
-    items: {},
+    attractions: {},
     slots: {},
   };
   apiBaseURL = "http://18.222.7.110:3000/api";
@@ -34,33 +34,28 @@ class App extends React.Component {
     this.getAttractionSlots = this.getAttractionSlots.bind(this);
     this.getAllAttractions = this.getAllAttractions.bind(this);
     this.handleModalIdSubmit = this.handleModalIdSubmit.bind(this);
+    this.handleProfileRefresh = this.handleProfileRefresh.bind(this);
   }
 
   /**
    * Opens the student account modal
    */
   showStudentModal() {
-    this.getStudentTickets().then(() => {
-      this.modalRef.current.setState({
-        open: true,
-        tickets: this.state.student.tickets,
-        studentId: this.state.student.id,
-      });
-    });
+    if (this.state.student.id !== undefined) {
+      // Only retrieve new tickets if the user ID is set
+      this.handleProfileRefresh();
+    }
+
+    // Retrieve tickes and then update the modal with the current app state
+    this.modalRef.current.setState({ open: true });
   }
 
   /**
    * Retrieve tickets based on user ID
    *
-   * @returns Promise from API retrieval if student ID is defined, otherwise an
-   *          empty promise
+   * @returns Promise from API retrieval
    */
   getStudentTickets() {
-    if (this.state.student.id === undefined) {
-      // Unable to retrieve tickets for specific user
-      return new Promise();
-    }
-
     return fetch("http://18.222.7.110:3000/api/tickets/")
       .then((res) => res.json())
       .then(
@@ -139,7 +134,7 @@ class App extends React.Component {
           }, {});
           this.setState({
             loadedAttractions: true,
-            items: attractions,
+            attractions: attractions,
           });
         },
         (err) => {
@@ -147,12 +142,18 @@ class App extends React.Component {
           console.error(err);
           this.setState({
             loadedAttractions: true,
+            attractions: {},
             error: "Failed to load attractions",
           });
         }
       );
   }
 
+  /**
+   * Updates app's student ID
+   *
+   * @param {string} id New student ID string
+   */
   handleModalIdSubmit(id) {
     // TODO: Clean up this callback hell. Ideally the modal state should
     //       rely on the main app's state
@@ -161,13 +162,25 @@ class App extends React.Component {
       (prevState) => ({
         student: { ...prevState.student, id: id },
       }),
-      () =>
-        this.getStudentTickets().then(() =>
-          this.modalRef.current.setState({
-            tickets: this.state.student.tickets,
-          })
-        )
+      this.handleProfileRefresh
     );
+  }
+
+  handleProfileRefresh() {
+    if (this.state.student.id === undefined) {
+      return;
+    }
+
+    // Update modal's state with current attractions, tickets, and student ID
+    this.getStudentTickets().then(() => {
+      this.modalRef.current.setState((prevState) => ({
+        ...prevState,
+        slots: this.state.slots,
+        attractions: this.state.attractions,
+        tickets: this.state.student.tickets,
+        studentId: this.state.student.id,
+      }));
+    });
   }
 
   render() {
@@ -188,10 +201,11 @@ class App extends React.Component {
           header="Student Profile"
           ref={this.modalRef}
           onIdSubmit={this.handleModalIdSubmit}
+          onRefresh={this.handleProfileRefresh}
         />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
-          <TitleBar getStudentTickets={this.showStudentModal} />
+          <TitleBar onProfileClick={this.showStudentModal} />
         </Sticky>
         <Events {...this.state} />
       </div>

@@ -42,9 +42,11 @@ class StudentIdInput extends React.Component {
   }
 
   render() {
+    const defaultVal =
+      this.props.studentId === "000000" ? "" : this.props.studentId;
     return (
       <Input
-        defaultValue={this.props.studentId}
+        defaultValue={defaultVal}
         placeholder="0000000"
         onChange={(_, val) => {
           this.setState({ error: !this.validateId(val.value) });

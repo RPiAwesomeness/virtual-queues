@@ -4,7 +4,7 @@ import Attraction from "./attraction";
 
 const Events = (props) => {
   const numEventColumns = 4;
-  const { loadedAttractions, loadedSlots, items, slots } = props;
+  const { loadedAttractions, loadedSlots, attractions, slots } = props;
 
   if (!loadedAttractions) {
     return (
@@ -26,7 +26,7 @@ const Events = (props) => {
   } else if (loadedAttractions && !loadedSlots) {
     return (
       <Grid stackable columns={numEventColumns}>
-        {Array.from(items, ([key, val]) => (
+        {Array.from(attractions, ([key, val]) => (
           <Grid.Column key={key}>
             <Placeholder>
               <Placeholder.Header image>
@@ -46,11 +46,11 @@ const Events = (props) => {
 
   return (
     <Grid stackable columns={numEventColumns}>
-      {Object.entries(items).map(([key, val]) => {
+      {Object.entries(attractions).map(([key, val]) => {
         const now = Date.now();
         const start = new Date(Date.parse(val.start_time));
         const end = new Date(Date.parse(val.end_time));
-        const isActive = items.length > 0 && now >= start && end >= now;
+        const isActive = attractions.length > 0 && now >= start && end >= now;
 
         return (
           <Grid.Column key={key}>

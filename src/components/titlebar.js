@@ -5,7 +5,7 @@ export default class TitleBar extends React.Component {
   constructor(props) {
     super(props);
 
-    this.getStudentTickets = props.getStudentTickets;
+    this.handleProfileClick = props.onProfileClick;
 
     this.style = {
       display: "flex",
@@ -27,12 +27,12 @@ export default class TitleBar extends React.Component {
         <div id="nav-buttons">
           <Button icon circular size="big" onClick={this.onHelpClicked}>
             <Button.Content visible>
-              <Icon name="question circle outline" />
+              <Icon fitted name="question circle outline" />
             </Button.Content>
           </Button>
-          <Button icon circular size="big" onClick={this.getStudentTickets}>
+          <Button icon circular size="big" onClick={this.handleProfileClick}>
             <Button.Content visible>
-              <Icon name="user outline" />
+              <Icon fitted name="user outline" />
             </Button.Content>
           </Button>
         </div>
