@@ -6,6 +6,7 @@ import { Sticky } from "semantic-ui-react";
 import TitleBar from "./components/titlebar";
 import Events from "./components/events";
 import StudentModal from "./components/studentModal";
+import HelpModal from "./components/helpModal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -13,6 +14,7 @@ import "semantic-ui-css/semantic.min.css";
 class App extends React.Component {
   contextRef = createRef();
   modalRef = createRef();
+  helpModalRef = createRef();
 
   state = {
     error: null,
@@ -30,11 +32,27 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    // Modals
     this.showStudentModal = this.showStudentModal.bind(this);
+    this.showHelpModal = this.showHelpModal.bind(this);
+
+    // General data retrieval
     this.getAttractionSlots = this.getAttractionSlots.bind(this);
     this.getAllAttractions = this.getAllAttractions.bind(this);
+
+    // Handlers for student profile
     this.handleModalIdSubmit = this.handleModalIdSubmit.bind(this);
     this.handleProfileRefresh = this.handleProfileRefresh.bind(this);
+    this.handleTicketRemove = this.handleTicketRemove.bind(this);
+  }
+
+  showHelpModal() {
+    if (this.helpModalRef.current === null) {
+      console.log("Failing to show modal");
+      return;
+    }
+
+    this.helpModalRef.current.setState({ open: true });
   }
 
   /**
@@ -56,11 +74,11 @@ class App extends React.Component {
    * @returns Promise from API retrieval
    */
   getStudentTickets() {
-    return fetch("http://18.222.7.110:3000/api/tickets/")
+    return fetch(`${this.apiBaseURL}/tickets/`)
       .then((res) => res.json())
       .then(
         (res) => {
-          console.log(res);
+          console.log("Received tickets:", res);
 
           // Filter tickets specific to this student
           const userTickets = res.data.filter(
@@ -155,8 +173,6 @@ class App extends React.Component {
    * @param {string} id New student ID string
    */
   handleModalIdSubmit(id) {
-    // TODO: Clean up this callback hell. Ideally the modal state should
-    //       rely on the main app's state
     // Update local state with new student ID, retrieving new tickets after
     this.setState(
       (prevState) => ({
@@ -183,6 +199,38 @@ class App extends React.Component {
     });
   }
 
+  handleTicketRemove(id) {
+    console.log("Removing ticket w/ ID", id);
+    fetch(`${this.apiBaseURL}/tickets/${id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(
+        (res) => {
+          if (res.status !== "success") {
+            console.error("Failed to remove ticket w/ ID", id);
+            console.error("Error:", res.message);
+            return;
+          }
+
+          // Filter out removed ticket
+          const newTickets = [
+            ...this.state.student.tickets.filter((tic) => tic._id !== id),
+          ];
+          this.setState(
+            (prevState) => ({
+              student: { ...prevState.student, tickets: newTickets },
+            }),
+            this.handleProfileRefresh
+          );
+
+          console.log("Removed ticket", res.data);
+        },
+        (err) => {
+          console.error("Failed to remove ticket w/ ID", id);
+          console.error(err);
+        }
+      );
+  }
+
   render() {
     const { error, loadedAttractions, loadedSlots } = this.state;
 
@@ -202,10 +250,15 @@ class App extends React.Component {
           ref={this.modalRef}
           onIdSubmit={this.handleModalIdSubmit}
           onRefresh={this.handleProfileRefresh}
+          onTicketRemove={this.handleTicketRemove}
         />
+        <HelpModal ref={this.helpModalRef} />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
-          <TitleBar onProfileClick={this.showStudentModal} />
+          <TitleBar
+            onHelpClick={this.showHelpModal}
+            onProfileClick={this.showStudentModal}
+          />
         </Sticky>
         <Events {...this.state} />
       </div>

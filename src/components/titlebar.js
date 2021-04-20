@@ -6,6 +6,7 @@ export default class TitleBar extends React.Component {
     super(props);
 
     this.handleProfileClick = props.onProfileClick;
+    this.handleHelpClick = props.onHelpClick;
 
     this.style = {
       display: "flex",
@@ -17,15 +18,11 @@ export default class TitleBar extends React.Component {
     };
   }
 
-  onHelpClicked() {
-    alert("foo");
-  }
-
   render() {
     return (
       <header style={this.style}>
         <div id="nav-buttons">
-          <Button icon circular size="big" onClick={this.onHelpClicked}>
+          <Button icon circular size="big" onClick={this.handleHelpClick}>
             <Button.Content visible>
               <Icon fitted name="question circle outline" />
             </Button.Content>

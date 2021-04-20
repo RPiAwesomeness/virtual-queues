@@ -12,6 +12,7 @@ class StudentModal extends React.Component {
     // Event handlers
     this.handleIdSubmit = props.onIdSubmit;
     this.handleRefresh = props.onRefresh;
+    this.handleTicketRemove = props.onTicketRemove;
 
     // Props and state
     this.header = props.header;
@@ -24,6 +25,11 @@ class StudentModal extends React.Component {
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
+  }
+
+  handleRemove(id) {
+    this.handleTicketRemove(id);
   }
 
   handleSubmit() {
@@ -65,8 +71,11 @@ class StudentModal extends React.Component {
               </Table.Header>
               <Table.Body>
                 {this.state.tickets.map((val) => {
-                  // val.slot_id gives a slot ID which is used to search available slots to get the event name
-                  // TODO: Rework slots to avoid having to search for attraction every time
+                  // NOTE: This loop's performance likely could be improved with
+                  //       some form of caching so we're not looking up names
+                  //       every time.
+                  // val.slot_id gives a slot ID which is used to search
+                  // available slots to get the event name
                   var slotName = "UNKNOWN ATTRACTION";
                   for (const attractionId in this.state.slots) {
                     const slots = this.state.slots[attractionId];
@@ -79,8 +88,10 @@ class StudentModal extends React.Component {
                       continue;
                     }
 
+                    // Retrieved slot name, break out of loop now
                     slotName = this.state.attractions[ticketSlot.attraction_id]
                       .name;
+                    break;
                   }
 
                   return (
@@ -88,7 +99,10 @@ class StudentModal extends React.Component {
                       <Table.Cell>{slotName}</Table.Cell>
                       <Table.Cell>{val._id}</Table.Cell>
                       <Table.Cell collapsing>
-                        <Button icon="delete" />
+                        <Button
+                          icon="delete"
+                          onClick={() => this.handleRemove(val._id)}
+                        />
                       </Table.Cell>
                     </Table.Row>
                   );
