@@ -7,15 +7,16 @@ import TitleBar from "./components/titlebar";
 import Events from "./components/events";
 import StudentModal from "./components/studentModal";
 import HelpModal from "./components/helpModal";
-import CardModal from "./components/cardmodal";
+import CardModal from "./components/cardModal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
 
 class App extends React.Component {
   contextRef = createRef();
-  modalRef = createRef();
+  profileRef = createRef();
   helpModalRef = createRef();
+  attractionModalRef = createRef();
 
   state = {
     error: null,
@@ -36,6 +37,7 @@ class App extends React.Component {
     // Modals
     this.showStudentModal = this.showStudentModal.bind(this);
     this.showHelpModal = this.showHelpModal.bind(this);
+    this.showAttractionModal = this.showAttractionModal.bind(this);
 
     // General data retrieval
     this.getAttractionSlots = this.getAttractionSlots.bind(this);
@@ -45,6 +47,10 @@ class App extends React.Component {
     this.handleModalIdSubmit = this.handleModalIdSubmit.bind(this);
     this.handleProfileRefresh = this.handleProfileRefresh.bind(this);
     this.handleTicketRemove = this.handleTicketRemove.bind(this);
+  }
+
+  showAttractionModal() {
+    this.attractionModalRef.current.setState({ open: true });
   }
 
   showHelpModal() {
@@ -66,7 +72,7 @@ class App extends React.Component {
     }
 
     // Retrieve tickes and then update the modal with the current app state
-    this.modalRef.current.setState({ open: true });
+    this.profileRef.current.setState({ open: true });
   }
 
   /**
@@ -190,7 +196,7 @@ class App extends React.Component {
 
     // Update modal's state with current attractions, tickets, and student ID
     this.getStudentTickets().then(() => {
-      this.modalRef.current.setState((prevState) => ({
+      this.profileRef.current.setState((prevState) => ({
         ...prevState,
         slots: this.state.slots,
         attractions: this.state.attractions,
@@ -248,13 +254,14 @@ class App extends React.Component {
       <div ref={this.contextRef}>
         <StudentModal
           header="Student Profile"
-          ref={this.modalRef}
+          ref={this.profileRef}
           onIdSubmit={this.handleModalIdSubmit}
           onRefresh={this.handleProfileRefresh}
           onTicketRemove={this.handleTicketRemove}
         />
         <HelpModal ref={this.helpModalRef} />
         <CardModal
+          ref={this.attractionModalRef}
           open={this.state.showModal} //Tries to update open within CardModal
           name={this.name}
           description={this.description}
@@ -270,7 +277,7 @@ class App extends React.Component {
             onProfileClick={this.showStudentModal}
           />
         </Sticky>
-        <Events {...this.state} />
+        <Events onAttractionClick={this.showAttractionModal} {...this.state} />
       </div>
     );
   }

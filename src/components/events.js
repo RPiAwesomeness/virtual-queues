@@ -4,7 +4,13 @@ import Attraction from "./attraction";
 
 const Events = (props) => {
   const numEventColumns = 4;
-  const { loadedAttractions, loadedSlots, attractions, slots } = props;
+  const {
+    loadedAttractions,
+    loadedSlots,
+    attractions,
+    slots,
+    onAttractionClick,
+  } = props;
 
   if (!loadedAttractions) {
     return (
@@ -63,6 +69,7 @@ const Events = (props) => {
               imageURL={val.image_url}
               endTime={end}
               slots={slots[key]}
+              onClick={onAttractionClick}
             />
           </Grid.Column>
         );
