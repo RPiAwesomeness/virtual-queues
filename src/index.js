@@ -13,8 +13,39 @@ import "semantic-ui-css/semantic.min.css";
 import christmas from "./images/christmas.jpg";
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onAttractionClicked = this.onAttractionClicked.bind(this)
+        this.name = "yes";//props.name;
+        this.description = props.description;
+        this.active = props.isActive;
+        this.available = props.available;
+        this.maxAvailable = props.maxAvailable;
+        this.img = props.image;
+        this.state = {
+            showModal: false
+        };
+     }
   contextRef = createRef();
-
+    onAttractionClicked(refer) {
+        alert(this.name);
+        if (this.state.showModal) {
+            this.setState({ showModal: false });               //Doesn't work due to scope
+        }
+        else {
+            this.name = refer.name;
+            this.description = refer.description;
+            this.active = refer.isActive;
+            this.available = refer.available;
+            this.maxAvailable = refer.maxAvailable;
+            this.img = refer.img;
+            this.setState({ showModal: true });
+        }
+        alert(this.name);
+    }
+    onExitClicked() {
+        this.setState({ showModal: false });
+    }
   render() {
     fetch("http://18.222.7.110:3000/api/engagements")
       .then((res) => res.json())
@@ -25,6 +56,7 @@ class App extends React.Component {
         (err) => {
           console.error(err);
         }
+
       );
 
     return (
@@ -32,55 +64,66 @@ class App extends React.Component {
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
           <TitleBar />
-        </Sticky>
-        <CardModal name="Christmas Train"
-            description="Ride on a train choo choo!"
-            isActive={false}
-            available={30}
-            maxAvailable={20}
-            image={christmas}/>
-        <Card.Group>
-          <Attraction
-            name="Christmas Train"
-            description="Ride on a train choo choo!"
-            isActive={false}
-            available={0}
-            maxAvailable={20}
-            image={christmas}
-          />
-          <Attraction
-            name="Christmas Train"
-            description="Ride on a train choo choo!"
-            isActive={true}
-            available={1}
-            maxAvailable={20}
-            image={christmas}
-          />
-          <Attraction
-            name="Christmas Train"
-            description="Ride on a train choo choo!"
-            isActive={true}
-            available={2}
-            maxAvailable={20}
-            image={christmas}
-          />
-          <Attraction
-            name="Christmas Train"
-            description="Ride on a train choo choo!"
-            isActive={true}
-            available={3}
-            maxAvailable={20}
-            image={christmas}
-          />
-          <Attraction
-            name="Christmas Train"
-            description="Ride on a train choo choo!"
-            isActive={true}
-            available={4}
-            maxAvailable={20}
-            image={christmas}
-          />
-            </Card.Group>
+          </Sticky>
+            <CardModal
+                open={this.state.showModal}            //Tries to update open within CardModal
+                name={this.name}
+                description={this.description}
+                isActive={this.active}
+                available={this.available}
+                maxAvailable={this.maxAvailable}
+                image={this.img}
+                
+            />
+            <Card.Group>
+                    <Attraction onAttractionClicked={this.onAttractionClicked}
+                        name="Christmas Train"
+                        description="Ride on a train choo choo!"
+                        isActive={false}
+                        available={0}
+                        maxAvailable={20}
+                        image={christmas}
+                    />
+
+                <Attraction onAttractionClicked={this.onAttractionClicked}
+                        name="Christmas Train"
+                        description="Ride on a train choo choo!"
+                        isActive={true}
+                        available={1}
+                        maxAvailable={20}
+                        image={christmas}
+                    />
+
+                    <Attraction
+                        name="Christmas Train"
+                        description="Ride on a train choo choo!"
+                        isActive={true}
+                        available={2}
+                        maxAvailable={20}
+                        image={christmas}
+                    onAttractionClicked={this.onAttractionClicked}
+                    />
+                    <Attraction
+                        name="Christmas Train"
+                        description="Ride on a train choo choo!"
+                        isActive={true}
+                        available={3}
+                        maxAvailable={20}
+                        image={christmas}
+                        onAttractionClicked={this.onAttractionClicked}
+                    />
+                    <Attraction
+                        name="Christmas Train"
+                        description="Ride on a train choo choo!"
+                        isActive={true}
+                        available={4}
+                        maxAvailable={20}
+                        image={christmas}
+                        onAttractionClicked={this.onAttractionClicked}
+                    />
+            </Card.Group >
+    
+    );
         <p style={{ fontSize: "24pt" }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Integer

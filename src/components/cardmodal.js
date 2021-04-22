@@ -1,5 +1,7 @@
 import React from 'react'
 import { Button, Header, Image, Modal } from 'semantic-ui-react'
+import Attraction from './attraction';
+
 
 function CardModal(props) {
     const name = props.name;
@@ -8,10 +10,12 @@ function CardModal(props) {
     const available = props.available;
     const maxAvailable = props.maxAvailable;
     const img = props.image;
-    const [open, setOpen] = React.useState(false)       //Gets in the way of the open prop being sent.
+    const [dopen, setOpen] = React.useState(false)       //Gets in the way of the open prop being sent.
                                                         //Probably needs to be redefined in some way.
-    //const setOpen = React.useState(false)
-    //const open = props.open;
+    var open = props.open;
+    function setOpenState(e) {
+        open = false;
+    }
 
     return (
         <Modal
@@ -30,7 +34,7 @@ function CardModal(props) {
                 </Modal.Description>
             </Modal.Content>
             <Modal.Actions>
-            <Button color='black' onClick={() => setOpen(false)}>
+                <Button color='black' onClick={() => setOpen(false)}>
                     Exit
             </Button>
                 <Button
