@@ -7,6 +7,7 @@ import TitleBar from "./components/titlebar";
 import Events from "./components/events";
 import StudentModal from "./components/studentModal";
 import HelpModal from "./components/helpModal";
+import CardModal from "./components/cardmodal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -253,6 +254,15 @@ class App extends React.Component {
           onTicketRemove={this.handleTicketRemove}
         />
         <HelpModal ref={this.helpModalRef} />
+        <CardModal
+          open={this.state.showModal} //Tries to update open within CardModal
+          name={this.name}
+          description={this.description}
+          isActive={this.active}
+          available={this.available}
+          maxAvailable={this.maxAvailable}
+          image={this.img}
+        />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
           <TitleBar
