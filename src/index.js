@@ -7,7 +7,7 @@ import TitleBar from "./components/titlebar";
 import Events from "./components/events";
 import StudentModal from "./components/studentModal";
 import HelpModal from "./components/helpModal";
-import CardModal from "./components/cardModal";
+import AttractionModal from "./components/attractionModal";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -37,7 +37,8 @@ class App extends React.Component {
     // Modals
     this.showStudentModal = this.showStudentModal.bind(this);
     this.showHelpModal = this.showHelpModal.bind(this);
-    this.showAttractionModal = this.showAttractionModal.bind(this);
+    this.showHelpModal = this.showHelpModal.bind(this);
+    this.handleAttractionClick = this.handleAttractionClick.bind(this);
 
     // General data retrieval
     this.getAttractionSlots = this.getAttractionSlots.bind(this);
@@ -49,17 +50,8 @@ class App extends React.Component {
     this.handleTicketRemove = this.handleTicketRemove.bind(this);
   }
 
-  showAttractionModal() {
-    this.attractionModalRef.current.setState({ open: true });
-  }
-
   showHelpModal() {
-    if (this.helpModalRef.current === null) {
-      console.log("Failing to show modal");
-      return;
-    }
-
-    this.helpModalRef.current.setState({ open: true });
+    this.attractionModalRef.current.setState({ open: true });
   }
 
   /**
@@ -238,6 +230,25 @@ class App extends React.Component {
       );
   }
 
+  handleAttractionClick(id) {
+    const attraction = this.state.attractions[id];
+    const now = Date.now();
+    const start = new Date(Date.parse(attraction.start_time));
+    const end = new Date(Date.parse(attraction.end_time));
+    const isActive = now >= start && end >= now;
+
+    this.attractionModalRef.current.setState({
+      name: attraction.name,
+      description: attraction.description,
+      img: attraction.image_url,
+      isActive: isActive,
+      startTime: attraction.start_time,
+      endTime: attraction.end_time,
+      slots: this.state.slots[id],
+      open: true,
+    });
+  }
+
   render() {
     const { error, loadedAttractions, loadedSlots } = this.state;
 
@@ -260,7 +271,7 @@ class App extends React.Component {
           onTicketRemove={this.handleTicketRemove}
         />
         <HelpModal ref={this.helpModalRef} />
-        <CardModal
+        <AttractionModal
           ref={this.attractionModalRef}
           open={this.state.showModal} //Tries to update open within CardModal
           name={this.name}
@@ -277,7 +288,10 @@ class App extends React.Component {
             onProfileClick={this.showStudentModal}
           />
         </Sticky>
-        <Events onAttractionClick={this.showAttractionModal} {...this.state} />
+        <Events
+          onAttractionClick={this.handleAttractionClick}
+          {...this.state}
+        />
       </div>
     );
   }

@@ -22,14 +22,15 @@ export default class TitleBar extends React.Component {
     return (
       <header style={this.style}>
         <div id="nav-buttons">
-          <Button icon circular size="big" onClick={this.handleHelpClick}>
+          <Button inverted icon size="big" onClick={this.handleProfileClick}>
             <Button.Content visible>
-              <Icon fitted name="question circle outline" />
+              <Icon name="user outline" />
+              Profile
             </Button.Content>
           </Button>
-          <Button icon circular size="big" onClick={this.handleProfileClick}>
+          <Button icon inverted size="big" onClick={this.handleHelpClick}>
             <Button.Content visible>
-              <Icon fitted name="user outline" />
+              <Icon fitted name="question circle outline" />
             </Button.Content>
           </Button>
         </div>

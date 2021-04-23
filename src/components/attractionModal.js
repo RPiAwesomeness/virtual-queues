@@ -1,29 +1,28 @@
 import React from "react";
 import { Button, Header, Image, Modal } from "semantic-ui-react";
+import PagedAttractions from "./pagedAttractions";
 
-class CardModal extends React.Component {
-  state = {
-    open: false,
-    name: "",
-    description: "",
-    active: false,
-    available: 0,
-    maxAvailable: 0,
-    img: "",
-  };
-
+class AttractionModal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state.name = props.name;
-    this.state.description = props.description;
-    this.state.active = props.isActive;
-    this.state.available = props.available;
-    this.state.maxAvailable = props.maxAvailable;
-    this.state.img = props.image;
+    this.state = {
+      open: false,
+      name: props.name,
+      description: props.description,
+      active: props.isActive,
+      slots: props.slots === undefined ? [] : props.slots,
+      maxAvailable: props.maxAvailable,
+      img: props.image,
+    };
   }
 
   render() {
+    const [maxCapacity, takenSlots] = this.state.slots.reduce(
+      (acc, slot) => [acc[0] + slot.ticket_capacity, acc[1] + slot.taken],
+      [0, 0]
+    );
+
     return (
       <Modal
         onClose={() => this.setState({ open: false })}
@@ -36,19 +35,21 @@ class CardModal extends React.Component {
           <Modal.Description>
             <Header>{this.state.name}</Header>
             <p>{this.state.description}</p>
-            <p>There are {this.state.available} tickets available.</p>
+            <PagedAttractions slots={this.state.slots} />
+            <Header>
+              {`There are ${
+                maxCapacity - takenSlots
+              }/${maxCapacity} tickets available.`}
+            </Header>
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button color="black" onClick={() => this.setState({ open: false })}>
-            Exit
-          </Button>
           <Button
-            content="Reserve a ticket"
+            content="Okay"
             labelPosition="right"
             icon="checkmark"
             onClick={() => this.setState({ open: false })}
-            positive
+            inverted
           />
         </Modal.Actions>
       </Modal>
@@ -56,4 +57,4 @@ class CardModal extends React.Component {
   }
 }
 
-export default CardModal;
+export default AttractionModal;
