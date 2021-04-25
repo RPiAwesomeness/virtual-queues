@@ -1,0 +1,23 @@
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+}
+
+h2.ui.header {
+  margin-top: 0;
+  color: white;
+}
+
+.ui.header .sub.header {
+  color: white !important;
+}
+
+.ui.cards {
+  overflow-x: scroll !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+}
+
+.ui.card {
+  display: inline-block;
+}
