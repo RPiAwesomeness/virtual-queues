@@ -44,6 +44,8 @@ class StudentModal extends React.Component {
   }
 
   render() {
+    const now = Date.now();
+
     return (
       <Modal
         closeIcon
@@ -76,14 +78,13 @@ class StudentModal extends React.Component {
                   //       every time.
                   // val.slot_id gives a slot ID which is used to search
                   // available slots to get the event name
-                  var slotName = "UNKNOWN ATTRACTION";
+                  let slotName = "UNKNOWN ATTRACTION";
+                  let ticketSlot = null;
                   for (const attractionId in this.state.slots) {
                     const slots = this.state.slots[attractionId];
 
                     // Attempt to find based on slot ID
-                    const ticketSlot = slots.find(
-                      (slot) => slot._id === val.slot_id
-                    );
+                    ticketSlot = slots.find((slot) => slot._id === val.slot_id);
                     if (ticketSlot === undefined) {
                       continue;
                     }
@@ -94,8 +95,13 @@ class StudentModal extends React.Component {
                     break;
                   }
 
+                  // TODO: Just return null if it's not a valid reservation
+                  //       anymore
+                  // Disable if the hide time is in the past
+                  const hideTime = new Date(Date.parse(ticketSlot.hide_time));
+
                   return (
-                    <Table.Row key={val._id}>
+                    <Table.Row disabled={hideTime <= now} key={val._id}>
                       <Table.Cell>{slotName}</Table.Cell>
                       <Table.Cell>{val._id}</Table.Cell>
                       <Table.Cell collapsing>

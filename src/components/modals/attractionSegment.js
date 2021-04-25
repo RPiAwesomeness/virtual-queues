@@ -1,6 +1,6 @@
 import { Card, Segment, Icon, Button } from "semantic-ui-react";
 
-const PagedAttractions = (props) => {
+const AttractionsSegment = (props) => {
   return (
     <Segment>
       <Card.Group>
@@ -8,8 +8,8 @@ const PagedAttractions = (props) => {
           const now = Date.now();
           const hideTime = new Date(Date.parse(slot.hide_time));
 
-          if (hideTime >= now) {
-            return <p>NA</p>;
+          if (hideTime <= now) {
+            return null;
           }
 
           return (
@@ -45,4 +45,4 @@ const PagedAttractions = (props) => {
   );
 };
 
-export default PagedAttractions;
+export default AttractionsSegment;

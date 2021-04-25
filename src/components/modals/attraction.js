@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Header, Image, Modal } from "semantic-ui-react";
-import PagedAttractions from "./pagedAttractions";
+import AttractionsSegment from "./attractionSegment";
 
 class AttractionModal extends React.Component {
   constructor(props) {
@@ -35,7 +35,7 @@ class AttractionModal extends React.Component {
           <Modal.Description>
             <Header>{this.state.name}</Header>
             <p>{this.state.description}</p>
-            <PagedAttractions slots={this.state.slots} />
+            <AttractionsSegment slots={this.state.slots} />
             <Header>
               {`There are ${
                 maxCapacity - takenSlots

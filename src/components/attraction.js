@@ -90,9 +90,16 @@ export default class Attraction extends React.Component {
   }
 
   render() {
-    let [maxCapacity, takenSlots] = this.state.slots.reduce(
-      (acc, slot) => [acc[0] + slot.ticket_capacity, acc[1] + slot.taken],
-      [0, 0]
+    const now = Date.now();
+
+    let [maxCapacity, takenSlots, numSlots] = this.state.slots.reduce(
+      (acc, slot) => {
+        const hideTime = new Date(Date.parse(slot.hide_time));
+        return hideTime <= now
+          ? [acc[0], acc[1], acc[2]]
+          : [acc[0] + slot.ticket_capacity, acc[1] + slot.taken, acc[2] + 1];
+      },
+      [0, 0, 0]
     );
 
     return (
@@ -105,8 +112,8 @@ export default class Attraction extends React.Component {
         <Card.Content extra>
           <div>
             <Icon name="user" />
-            {maxCapacity - takenSlots}/{maxCapacity} available in{" "}
-            {this.state.slots.length} slots
+            {maxCapacity - takenSlots}/{maxCapacity} available in {numSlots}{" "}
+            slots
           </div>
           <div>
             <Icon name="clock" />

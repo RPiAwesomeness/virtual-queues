@@ -5,9 +5,9 @@ import { Sticky } from "semantic-ui-react";
 
 import TitleBar from "./components/titlebar";
 import Events from "./components/events";
-import StudentModal from "./components/studentModal";
-import HelpModal from "./components/helpModal";
-import AttractionModal from "./components/attractionModal";
+import StudentModal from "./components/modals/studentProfile";
+import HelpModal from "./components/modals/help";
+import AttractionModal from "./components/modals/attraction";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -51,7 +51,7 @@ class App extends React.Component {
   }
 
   showHelpModal() {
-    this.attractionModalRef.current.setState({ open: true });
+    this.helpModalRef.current.setState({ open: true });
   }
 
   /**
