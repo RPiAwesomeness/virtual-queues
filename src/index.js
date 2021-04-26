@@ -8,6 +8,7 @@ import Events from "./components/events";
 import StudentModal from "./components/modals/studentProfile";
 import HelpModal from "./components/modals/help";
 import AttractionModal from "./components/modals/attraction";
+import Toast from "./components/toast";
 
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
@@ -17,6 +18,7 @@ class App extends React.Component {
   profileRef = createRef();
   helpModalRef = createRef();
   attractionModalRef = createRef();
+  toastRef = createRef();
 
   state = {
     error: null,
@@ -48,6 +50,14 @@ class App extends React.Component {
     this.handleModalIdSubmit = this.handleModalIdSubmit.bind(this);
     this.handleProfileRefresh = this.handleProfileRefresh.bind(this);
     this.handleTicketRemove = this.handleTicketRemove.bind(this);
+
+    // Handlers related to attractions
+    this.handleTicketReserve = this.handleTicketReserve.bind(this);
+    this.isStudentSignedIn = this.isStudentSignedIn.bind(this);
+  }
+
+  isStudentSignedIn() {
+    return this.state.student.id !== undefined;
   }
 
   showHelpModal() {
@@ -244,9 +254,47 @@ class App extends React.Component {
       isActive: isActive,
       startTime: attraction.start_time,
       endTime: attraction.end_time,
-      slots: this.state.slots[id],
+      slots: this.state.slots[id] || [],
       open: true,
     });
+  }
+
+  handleTicketReserve(slotId) {
+    const ticketReq = {
+      student_id: this.state.student.id,
+      slot_id: slotId,
+    };
+
+    const postOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ticketReq),
+    };
+
+    fetch("http://18.222.7.110:3000/api/tickets/", postOptions)
+      .then((res) => res.json())
+      .then(
+        (res) => {
+          console.log("Request Result:", res);
+          if (res.status !== "success") {
+            // TODO: Make this user-friendly (likely need to log in)
+            this.toastRef.current.setState({
+              success: false,
+              message: res.message._message,
+              header: "Error",
+            });
+          } else {
+            this.toastRef.current.setState({
+              success: true,
+              message: `Successfully retrieved ticket with ID ${res.data._id}!`,
+              header: "Success!",
+            });
+          }
+
+          this.toastRef.current.handleOpen();
+        },
+        (err) => console.error(err)
+      );
   }
 
   render() {
@@ -280,6 +328,8 @@ class App extends React.Component {
           available={this.available}
           maxAvailable={this.maxAvailable}
           image={this.img}
+          onReserve={this.handleTicketReserve}
+          isStudentSignedIn={this.isStudentSignedIn}
         />
         {/* TODO: Resolve bounce when scrolling */}
         <Sticky context={this.contextRef}>
@@ -292,6 +342,10 @@ class App extends React.Component {
           onAttractionClick={this.handleAttractionClick}
           {...this.state}
         />
+        {/*
+          TODO: Convert this to a Portal to allow the toast to actually hover
+        */}
+        <Toast ref={this.toastRef} open={false} />
       </div>
     );
   }

@@ -11,7 +11,7 @@ export default class TitleBar extends React.Component {
     this.style = {
       display: "flex",
       justifyContent: "space-between",
-      background: "#053864",
+      background: "#00356f",
       padding: "20px",
       color: "white",
       overflow: "hidden",

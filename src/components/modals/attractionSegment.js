@@ -1,4 +1,4 @@
-import { Card, Segment, Icon, Button } from "semantic-ui-react";
+import { Card, Segment, Icon, Button, Popup } from "semantic-ui-react";
 
 const AttractionsSegment = (props) => {
   return (
@@ -11,6 +11,10 @@ const AttractionsSegment = (props) => {
           if (hideTime <= now) {
             return null;
           }
+
+          const hoverMsg = props.disabled
+            ? "Please sign in with your student ID first!"
+            : "Reserve a new ticket";
 
           return (
             <Card key={slot._id}>
@@ -26,16 +30,22 @@ const AttractionsSegment = (props) => {
                 </div>
               </Card.Content>
               <Card.Content extra>
-                <Button.Group>
-                  {/* Make this conditional based on whether we have a ticket or not */}
-                  <Button
-                    content="Reserve a ticket"
-                    labelPosition="right"
-                    icon="ticket"
-                    onClick={() => this.setState({ open: false })}
-                    positive
-                  />
-                </Button.Group>
+                {/* Make this conditional based on whether we have a ticket or not */}
+                <Popup
+                  trigger={
+                    <div>
+                      <Button
+                        disabled={props.disabled}
+                        content="Reserve a ticket"
+                        labelPosition="right"
+                        icon="ticket"
+                        onClick={() => props.onReserve(slot._id)}
+                        positive
+                      />
+                    </div>
+                  }
+                  content={hoverMsg}
+                />
               </Card.Content>
             </Card>
           );

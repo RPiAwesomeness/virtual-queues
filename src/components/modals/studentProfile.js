@@ -49,13 +49,22 @@ class StudentModal extends React.Component {
     return (
       <Modal
         closeIcon
-        size="small"
+        size="large"
         onClose={() => this.setState({ open: false })}
         onOpen={() => this.setState({ open: true })}
         open={this.state.open}
       >
-        <Modal.Header>{this.header}</Modal.Header>
+        <Modal.Header>
+          <Icon name="user outline" />
+          {this.header}
+        </Modal.Header>
         <Modal.Content>
+          <Header>Student ID</Header>
+          <StudentIdInput
+            onSubmit={this.handleSubmit}
+            studentId={this.state.studentId}
+            ref={this.idRef}
+          />
           <Segment clearing>
             <Header floated="left">Tickets Available</Header>
             <Header floated="right">
@@ -116,12 +125,6 @@ class StudentModal extends React.Component {
               </Table.Body>
             </Table>
           </Segment>
-          <Header>Student ID</Header>
-          <StudentIdInput
-            onSubmit={this.handleSubmit}
-            studentId={this.state.studentId}
-            ref={this.idRef}
-          />
         </Modal.Content>
       </Modal>
     );

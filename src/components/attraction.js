@@ -25,7 +25,6 @@ export default class Attraction extends React.Component {
     };
 
     this.getTicketsAvailable = this.getTicketsAvailable.bind(this);
-    this.requestTicketForSlot = this.requestTicketForSlot.bind(this);
   }
 
   componentDidMount() {
@@ -61,34 +60,6 @@ export default class Attraction extends React.Component {
     });
   }
 
-  requestTicketForSlot(slotId) {
-    const ticketReq = {
-      student_id: 2030758,
-      slot_id: slotId,
-    };
-
-    const postOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ticketReq),
-    };
-
-    fetch("http://18.222.7.110:3000/api/tickets/", postOptions)
-      .then((res) => res.json())
-      .then(
-        (res) => {
-          console.log("Request Result:", res);
-          this.toastRef.current.setState({
-            success: true,
-            visible: true,
-            message: `Successfully retrieved ticket with ID ${res.data._id}!`,
-            header: "Success!",
-          });
-        },
-        (err) => console.error(err)
-      );
-  }
-
   render() {
     const now = Date.now();
 
@@ -103,7 +74,7 @@ export default class Attraction extends React.Component {
     );
 
     return (
-      <Card onClick={() => this.props.onClick(this.id)} fluid>
+      <Card fluid onClick={() => this.props.onClick(this.id)}>
         <Image src={this.img} wrapped disabled={!this.active} />
         <Card.Content>
           <Card.Header>{this.name}</Card.Header>

@@ -25,22 +25,30 @@ class AttractionModal extends React.Component {
 
     return (
       <Modal
+        closeIcon
         onClose={() => this.setState({ open: false })}
         onOpen={() => this.setState({ open: true })}
         open={this.state.open}
       >
         <Modal.Header>Attraction Details</Modal.Header>
-        <Modal.Content image>
+        <Modal.Content image scrolling>
           <Image size="medium" src={this.state.img} wrapped />
           <Modal.Description>
             <Header>{this.state.name}</Header>
             <p>{this.state.description}</p>
-            <AttractionsSegment slots={this.state.slots} />
-            <Header>
+            {/* TODO: Check if the student already has a ticket */}
+            {this.state.slots.length > 0 ? (
+              <AttractionsSegment
+                disabled={!this.props.isStudentSignedIn()}
+                onReserve={this.props.onReserve}
+                slots={this.state.slots}
+              />
+            ) : null}
+            {/* <Header>
               {`There are ${
                 maxCapacity - takenSlots
               }/${maxCapacity} tickets available.`}
-            </Header>
+            </Header> */}
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
@@ -49,7 +57,7 @@ class AttractionModal extends React.Component {
             labelPosition="right"
             icon="checkmark"
             onClick={() => this.setState({ open: false })}
-            inverted
+            color="blue"
           />
         </Modal.Actions>
       </Modal>
